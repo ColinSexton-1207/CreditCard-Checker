@@ -27,11 +27,8 @@ const batch = [valid1, valid2, valid3, valid4, valid5, invalid1, invalid2, inval
 validateCred = creditArray => {
   let tempArray = creditArray; // Temp array to preserve original array values
   let droppedValue = creditArray[creditArray.length - 1]; // Stores dropped array value for later addition in CC validation equation
-      //console.log('Saving last element of array for addition: ' + creditSum); // Checks if last array value is stored
   tempArray.pop(); // Pops off last value of array
-      //console.log(tempArray); // Debug tool
-  tempArray.reverse();
-      //console.log(tempArray); // Debug tool
+  tempArray.reverse(); // Reverses the array in order to perform Luhn's algorithm
   let creditSum = 0; // Adds individual CC numbers to determine value
   let numberSum = 0; // Adds array values % 2 != 0 to variable
   let evenSum = 0; // Array for even # slot within array (non-reversed)
@@ -43,32 +40,25 @@ validateCred = creditArray => {
       let number = tempArray[arrayTraverse] * 2; // Multiply odd array elements by 2
       if(number > 9) {number = number - 9}; // Because CC numbers cannot be greater than 9, anything larger is subtracted by 9
       numberSum += number; // Temporarily holds single CC digit to be added to validator equation
-          //console.log('Number mulitplied/subtracted sum: ' + numberSum + ' Array value: ' + tempArray[arrayTraverse] + ' Number: ' + number); // Checks math of numbers to be added in final creditSum
     }
     // Conditional to target specific array elements
     if(arrayTraverse % 2 != 0) {
       evenSum += tempArray[arrayTraverse]; // Adds together array elements (non-reversed) that do not get multiplied
-          //console.log(arrayTraverse + ' ' + tempArray[arrayTraverse] + ' ' + evenSum); // Tests array position, array value, and evenSum are correctly outputting information
     }
   }
-      //console.log(`Check: ${droppedValue}... Check: ${evenSum}... Check: ${numberSum}...`); // Verifies all values are added correctly before final equation
   creditSum = droppedValue + evenSum + numberSum; // Final equation to get value before modulo check
-      //console.log('Shows numberSum added with non-modified values: ' + creditSum + ' Array value: ' + tempArray[arrayTraverse]); // Checks math of final numbers before validation equation
   tempArray.reverse(); // Puts array back to normal
   tempArray.push(droppedValue); // Puts dumped value back
   return (creditSum % 10 == 0) ? 'Valid' : 'Invalid'; // Returns validity of CC number
 }
-    //console.log(validateCred(invalid1)); // Output validity of CC #'s
 const findInvalidCards = batchArray => {
   let invalidCred = []; // New array to hold invalid CC arrays
   // Loop through the batch to test the nested CC arrays and validate them
   for(let batchLoop = 0; batchLoop < batchArray.length; batchLoop++) {
-      //console.log(batchArray[batchLoop]); // Test that nested arrays properly output
-    if(validateCred(batchArray[batchLoop]) != 'Valid') {invalidCred.push(batchArray[batchLoop])};
+    if(validateCred(batchArray[batchLoop]) != 'Valid') {invalidCred.push(batchArray[batchLoop])}; // Pushes invalid CC numbers to new array
   }
   return invalidCred; // Return invalid CC array
 }
-    //console.log(findInvalidCards(batch)); // Check to see if invalid CC arrays were stored correctly
 const idInvalidCardCompanies = (batchArray) => {
   let companyCheck = []; // Array that holds CC to be verified with CC company
   let companies = []; // Array that holds company names for invalid CC
@@ -98,4 +88,3 @@ const idInvalidCardCompanies = (batchArray) => {
   }
   return companies; // Returns list of CC comapnies with invalid CC's
 }
-    //console.log(idInvalidCardCompanies(batch)); //  Test findInvalidCardComapnies funciton  
